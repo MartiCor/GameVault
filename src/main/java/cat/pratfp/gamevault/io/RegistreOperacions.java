@@ -10,7 +10,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Registre de les operacions de GameVault en un fitxer de text (operacions.log).
+ * Registre de les operacions de GameVault en un fitxer de text
+ * (operacions.log).
  */
 public class RegistreOperacions {
 
@@ -20,24 +21,25 @@ public class RegistreOperacions {
     private final Path fitxer;
 
     /**
-     * @param fitxer fitxer de registre; si no existeix, es crea en la primera escriptura
+     * @param fitxer fitxer de registre; si no existeix, es crea en la primera
+     *               escriptura
      */
     public RegistreOperacions(Path fitxer) {
         this.fitxer = fitxer;
     }
 
-    /*
-     * TODO PR1-05 · Escriure al registre sense esborrar-lo (CA 1.4)
-     * Afegeix UNA línia al final del fitxer amb el format:
-     *     2026-10-13 15:10:02 | <text>
-     * - La data i hora: LocalDateTime.now().format(FORMAT)
-     * - Fes servir un BufferedWriter dins d'un try-with-resources.
-     * - Codificació UTF-8 explícita.
-     * - Si el fitxer no existeix s'ha de crear; si existeix, NO s'ha de buidar.
-     * Pista: sessió 5, Ex1FluxosDeText (StandardOpenOption).
+    /**
+     * Afegeix una nova línia al final del fitxer de registre amb marca de temps en codificació UTF-8.
+     * Si el fitxer no existeix el crea; si ja existeix, afegeix la línia sense esborrar el contingut previ.
+     *
+     * @param text descripció de l'operació que s'afegeix al registre
+     * @throws IOException si es produeix un error en escriure al fitxer
      */
     public void registra(String text) throws IOException {
-        // Escriu aquí el teu codi (PR1-05)
-        throw new UnsupportedOperationException("PR1-05: encara no està fet");
+        try (BufferedWriter bw = Files.newBufferedWriter(fitxer, StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
+            bw.write(LocalDateTime.now().format(FORMAT) + " | " + text);
+            bw.newLine();
+        }
     }
 }

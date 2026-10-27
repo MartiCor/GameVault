@@ -16,20 +16,20 @@ import java.util.List;
  */
 public class CauCataleg {
 
-    /*
-     * TODO PR1-11 · Serialitzar i desserialitzar el catàleg (CA 1.3 i 1.4)
-     * desa:    escriu amb un ObjectOutputStream UN sol objecte: new ArrayList<>(jocs).
-     *          (List.of(...) també és serialitzable, però així sempre desem el mateix tipus.)
-     * carrega: llegeix l'objecte amb un ObjectInputStream i retorna'l com a List<Joc>.
-     *          readObject pot llançar ClassNotFoundException: embolica-la en una IOException
-     *          amb un missatge clar i la causa original.
-     * Tots dos amb try-with-resources.
-     * 2a part: perquè funcioni, el record Joc ha de ser serialitzable (fitxer Joc.java).
-     * Pista: sessió 6, Ex1Serialitza.
+    /**
+     * Serialitza la llista sencera de jocs al fitxer binari indicat.
+     * S'embolica la llista en un {@link ArrayList} per assegurar que sempre se serialitza
+     * un tipus de llista concret i homogeni, garantint compatibilitat fins i tot si es rep
+     * una implementació immutable com la de List.of().
+     *
+     * @param p ruta del fitxer binari de destí (.ser)
+     * @param jocs llista de jocs a serialitzar
+     * @throws IOException si es produeix un error d'escriptura
      */
     public void desa(Path p, List<Joc> jocs) throws IOException {
-        // Escriu aquí el teu codi (PR1-11)
-        throw new UnsupportedOperationException("PR1-11: encara no està fet");
+        try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(p))) {
+            oos.writeObject(new ArrayList<>(jocs));
+        }
     }
 
     /**
@@ -41,7 +41,10 @@ public class CauCataleg {
      */
     @SuppressWarnings("unchecked")
     public List<Joc> carrega(Path p) throws IOException {
-        // Escriu aquí el teu codi (PR1-11)
-        throw new UnsupportedOperationException("PR1-11: encara no està fet");
+        try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(p))) {
+            return (List<Joc>) ois.readObject();
+        } catch (ClassNotFoundException e) {
+            throw new IOException("No s'ha trobat la classe al deserialitzar: " + e.getMessage(), e);
+        }
     }
 }

@@ -38,19 +38,23 @@ public class Convertidor {
         }
     }
 
-    /*
-     * TODO PR1-10 · Desar i convertir (CA 1.5 i 1.6)
-     * desa: fes el mateix que carrega(), però escrivint:
-     *   - "csv"  -> csv.escriu(desti, jocs)
-     *   - "json" -> json.escriu(desti, jocs)
-     *   - qualsevol altra extensió -> CatalegException amb el missatge "Format no suportat: <nom>"
-     *   - si l'escriptura llança IOException -> CatalegException amb missatge clar i la causa.
-     *   Compte: un switch amb fletxa que només executa mètodes void no retorna res; fes-lo com a sentència.
-     * converteix: carrega l'origen, desa'l al destí i retorna quants jocs s'han convertit.
+    /**
+     * Desa la llista de jocs al fitxer de destí segons la seva extensió (.csv o .json).
+     *
+     * @param desti ruta del fitxer de sortida
+     * @param jocs llista de jocs a desar
+     * @throws CatalegException si el format no és suportat o es produeix un error d'E/S en desar
      */
     public void desa(Path desti, List<Joc> jocs) throws CatalegException {
-        // Escriu aquí el teu codi (PR1-10)
-        throw new UnsupportedOperationException("PR1-10: encara no està fet");
+        try {
+            switch (extensio(desti)) {
+                case "csv" -> csv.escriu(desti, jocs);
+                case "json" -> json.escriu(desti, jocs);
+                default -> throw new CatalegException("Format no suportat: " + desti.getFileName());
+            }
+        } catch (IOException e) {
+            throw new CatalegException("No s'ha pogut escriure " + desti.getFileName() + ": " + e.getMessage(), e);
+        }
     }
 
     /**
@@ -62,8 +66,9 @@ public class Convertidor {
      * @throws CatalegException si algun dels dos formats no és suportat o hi ha un error d'E/S
      */
     public int converteix(Path origen, Path desti) throws CatalegException {
-        // Escriu aquí el teu codi (PR1-10)
-        throw new UnsupportedOperationException("PR1-10: encara no està fet");
+        List<Joc> jocs = carrega(origen);
+        desa(desti, jocs);
+        return jocs.size();
     }
 
     /** Extensió del fitxer en minúscules i sense el punt ("" si no en té). */

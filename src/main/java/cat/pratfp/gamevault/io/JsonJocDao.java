@@ -18,35 +18,38 @@ public class JsonJocDao {
 
     private final ObjectMapper mapper = creaMapper();
 
-    /*
-     * TODO PR1-08 (1a part) · Configurar l'ObjectMapper (CA 1.5)
-     * Retorna un ObjectMapper que:
-     *   - entengui LocalDate (registra el JavaTimeModule),
-     *   - escrigui les dates com "2017-02-24" i no com [2017,2,24],
-     *   - no peti si el JSON porta camps que Joc no té.
-     * Pista: sessió 6, Ex4JsonAmbJackson.
+    /**
+     * Retorna una instància d'ObjectMapper configurada per suportar dates de Java 8
+     * (LocalDate) com a cadenes ISO-8601 i tolerar propietats desconegudes.
+     *
+     * @return instància configurada d'ObjectMapper
      */
     private static ObjectMapper creaMapper() {
-        // Escriu aquí el teu codi (PR1-08)
-        return new ObjectMapper();
+        return new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
-    /*
-     * TODO PR1-08 (2a part) · Escriure la llista en JSON (CA 1.4)
-     * Escriu la llista sencera al fitxer, amb la sortida INDENTADA (una dada per línia).
+    /**
+     * Escriu la llista de jocs al fitxer en format JSON amb sortida indentada.
+     *
+     * @param p ruta del fitxer JSON de destí
+     * @param jocs llista de jocs a serialitzar
+     * @throws IOException si es produeix un error durant l'escriptura
      */
     public void escriu(Path p, List<Joc> jocs) throws IOException {
-        // Escriu aquí el teu codi (PR1-08)
-        throw new UnsupportedOperationException("PR1-08: encara no està fet");
+        mapper.writerWithDefaultPrettyPrinter().writeValue(p.toFile(), jocs);
     }
 
-    /*
-     * TODO PR1-09 · Llegir la llista des de JSON (CA 1.3)
-     * Llegeix el fitxer i retorna una List<Joc>.
-     * Compte: amb List.class Jackson no sap que els elements són Joc. Què feia servir l'exemple?
+    /**
+     * Llegeix la llista de jocs des del fitxer JSON fent servir un {@link TypeReference}.
+     *
+     * @param p ruta del fitxer JSON
+     * @return llista d'objectes Joc deserialitzats
+     * @throws IOException si es produeix un error de lectura o deserialització
      */
     public List<Joc> llegeix(Path p) throws IOException {
-        // Escriu aquí el teu codi (PR1-09)
-        throw new UnsupportedOperationException("PR1-09: encara no està fet");
+        return mapper.readValue(p.toFile(), new TypeReference<List<Joc>>() {});
     }
 }
