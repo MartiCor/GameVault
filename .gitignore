@@ -8,3 +8,5 @@ dades/export/
 dades/backup/
 dades/*.ser
 dades/*.log
+.docs
+docs/
